@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: CyberTechTalk OAuth Server
+ * Plugin Name: OAuth Server
  * Plugin URI: http://www.techtalk.andriejsazanowicz.com/
  * Version: 1.0.0
- * Description: Full OAuth2 Server for WordPress. User Authorization Management Systems For WordPress.
+ * Description: Authentication code based OAuth2 Server for WordPress.
  * Author: Andriej Sazanowicz
  * Author URI: http://www.techtalk.andriejsazanowicz.com/
  * Text Domain: cybertechtalk

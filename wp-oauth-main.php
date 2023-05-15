@@ -227,6 +227,7 @@ class WO_Server {
       );
 			";
 
+		include_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql1);
 		dbDelta($sql2);
 		dbDelta($sql3);

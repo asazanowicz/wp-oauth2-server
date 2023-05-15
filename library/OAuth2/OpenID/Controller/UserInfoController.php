@@ -14,45 +14,46 @@ use OAuth2\ResponseInterface;
 /**
  * @see OAuth2\Controller\UserInfoControllerInterface
  */
-class UserInfoController extends ResourceController implements UserInfoControllerInterface
-{
-    private $token;
+class UserInfoController extends ResourceController implements UserInfoControllerInterface {
 
-    protected $tokenType;
-    protected $tokenStorage;
-    protected $userClaimsStorage;
-    protected $config;
-    protected $scopeUtil;
+	private $token;
 
-    public function __construct(TokenTypeInterface $tokenType, AccessTokenInterface $tokenStorage, UserClaimsInterface $userClaimsStorage, $config = array(), ScopeInterface $scopeUtil = null)
-    {
-        $this->tokenType = $tokenType;
-        $this->tokenStorage = $tokenStorage;
-        $this->userClaimsStorage = $userClaimsStorage;
+	protected $tokenType;
+	protected $tokenStorage;
+	protected $userClaimsStorage;
+	protected $config;
+	protected $scopeUtil;
 
-        $this->config = array_merge(array(
-            'www_realm' => 'Service',
-        ), $config);
+	public function __construct( TokenTypeInterface $tokenType, AccessTokenInterface $tokenStorage, UserClaimsInterface $userClaimsStorage, $config = array(), ScopeInterface $scopeUtil = null ) {
+		$this->tokenType         = $tokenType;
+		$this->tokenStorage      = $tokenStorage;
+		$this->userClaimsStorage = $userClaimsStorage;
 
-        if (is_null($scopeUtil)) {
-            $scopeUtil = new Scope();
-        }
-        $this->scopeUtil = $scopeUtil;
-    }
+		$this->config = array_merge(
+			array(
+				'www_realm' => 'Service',
+			),
+			$config
+		);
 
-    public function handleUserInfoRequest(RequestInterface $request, ResponseInterface $response)
-    {
-        if (!$this->verifyResourceRequest($request, $response, 'openid')) {
-            return;
-        }
+		if ( is_null( $scopeUtil ) ) {
+			$scopeUtil = new Scope();
+		}
+		$this->scopeUtil = $scopeUtil;
+	}
 
-        $token = $this->getToken();
-        $claims = $this->userClaimsStorage->getUserClaims($token['user_id'], $token['scope']);
-        // The sub Claim MUST always be returned in the UserInfo Response.
-        // http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
-        $claims += array(
-            'sub' => $token['user_id'],
-        );
-        $response->addParameters($claims);
-    }
+	public function handleUserInfoRequest( RequestInterface $request, ResponseInterface $response ) {
+		if ( ! $this->verifyResourceRequest( $request, $response, 'openid' ) ) {
+			return;
+		}
+
+		$token  = $this->getToken();
+		$claims = $this->userClaimsStorage->getUserClaims( $token['user_id'], $token['scope'] );
+		// The sub Claim MUST always be returned in the UserInfo Response.
+		// http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
+		$claims += array(
+			'sub' => $token['user_id'],
+		);
+		$response->addParameters( $claims );
+	}
 }

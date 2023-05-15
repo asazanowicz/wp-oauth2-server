@@ -15,9 +15,8 @@ use OAuth2\ResponseInterface;
  *  >     OAuth2\Request::createFromGlobals(),
  *  >     $response;
  *  > $response->send();
- *
  */
-interface UserInfoControllerInterface
-{
-    public function handleUserInfoRequest(RequestInterface $request, ResponseInterface $response);
+interface UserInfoControllerInterface {
+
+	public function handleUserInfoRequest( RequestInterface $request, ResponseInterface $response );
 }
