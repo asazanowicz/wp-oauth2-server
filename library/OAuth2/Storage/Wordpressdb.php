@@ -1,9 +1,6 @@
 <?php
 namespace OAuth2\Storage;
 
-use OAuth2\OpenID\Storage\UserClaimsInterface;
-use OAuth2\OpenID\Storage\AuthorizationCodeInterface as OpenIDAuthorizationCodeInterface;
-
 /**
  * Simple WordPress Database Object Layer
  *
@@ -16,9 +13,7 @@ class Wordpressdb implements
 	AuthorizationCodeInterface, 
 	AccessTokenInterface, 
 	RefreshTokenInterface, 
-	ScopeInterface, 
-	UserClaimsInterface, 
-	OpenIDAuthorizationCodeInterface
+	ScopeInterface
 {
 	protected $db;
 	protected $config;

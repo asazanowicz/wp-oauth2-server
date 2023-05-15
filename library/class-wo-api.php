@@ -27,9 +27,7 @@ $storage = new OAuth2\Storage\Wordpressdb();
 $config = array(
 	'use_crypto_tokens' => false,
 	'store_encrypted_token_string' => false,
-	'use_openid_connect' => $o['use_openid_connect'] == '' ? false : $o['use_openid_connect'],
 	'issuer' => site_url( null, 'https' ), // Must be HTTPS
-	'id_lifetime' => $o['id_token_lifetime'] == '' ? 3600 : $o['id_token_lifetime'],
 	'access_lifetime' => $o['access_token_lifetime'] == '' ? 3600 : $o['access_token_lifetime'],
 	'refresh_token_lifetime' => $o['refresh_token_lifetime'] == '' ? 86400 : $o['refresh_token_lifetime'],
 	'www_realm' => 'Service',
@@ -37,7 +35,6 @@ $config = array(
 	'token_bearer_header_name' => 'Bearer',
 	'enforce_state' => $o['enforce_state'] == '1' ? true : false,
 	'require_exact_redirect_uri' => $o['require_exact_redirect_uri'] == '1' ? true : false,
-	'allow_implicit' => $o['implicit_enabled'] == '1' ? true : false,
 	'allow_credentials_in_request_body' => true, // Must be set to true for openID to work in most cases
 	'allow_public_clients' => false,
 	'always_issue_new_refresh_token' => true,
@@ -56,9 +53,6 @@ $server = new OAuth2\Server( $storage, $config );
  */
 $support_grant_types = array();
 $server->addGrantType( new OAuth2\GrantType\AuthorizationCode( $storage ) );
-if ( '1' == $o['use_openid_connect'] ) {
-	$server->addGrantType( new OAuth2\OpenID\GrantType\AuthorizationCode( $storage, $config ) );
-}
 
 /*
 |--------------------------------------------------------------------------

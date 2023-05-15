@@ -4,8 +4,6 @@ namespace OAuth2;
 
 use OAuth2\Controller\ResourceControllerInterface;
 use OAuth2\Controller\ResourceController;
-use OAuth2\OpenID\Controller\UserInfoControllerInterface;
-use OAuth2\OpenID\Controller\UserInfoController;
 use OAuth2\Controller\AuthorizeControllerInterface;
 use OAuth2\Controller\AuthorizeController;
 use OAuth2\Controller\TokenControllerInterface;
@@ -30,8 +28,7 @@ use OAuth2\GrantType\AuthorizationCode;
 */
 class Server implements ResourceControllerInterface,
     AuthorizeControllerInterface,
-    TokenControllerInterface,
-    UserInfoControllerInterface
+    TokenControllerInterface
 {
     // misc properties
     protected $response;
@@ -42,7 +39,6 @@ class Server implements ResourceControllerInterface,
     protected $authorizeController;
     protected $tokenController;
     protected $resourceController;
-    protected $userInfoController;
 
     // config classes
     protected $grantTypes;
@@ -55,6 +51,7 @@ class Server implements ResourceControllerInterface,
         'access_token' => 'OAuth2\Storage\AccessTokenInterface',
         'authorization_code' => 'OAuth2\Storage\AuthorizationCodeInterface',
         'scope' => 'OAuth2\Storage\ScopeInterface',
+        'client'             => 'OAuth2\Storage\ClientInterface',
     );
 
     protected $responseTypeMap = array(
@@ -87,7 +84,6 @@ class Server implements ResourceControllerInterface,
         $this->config = array_merge(array(
             'use_jwt_access_tokens'        => false,
             'store_encrypted_token_string' => true,
-            'use_openid_connect'       => false,
             'id_lifetime'              => 3600,
             'access_lifetime'          => 3600,
             'www_realm'                => 'Service',
@@ -142,15 +138,6 @@ class Server implements ResourceControllerInterface,
         return $this->resourceController;
     }
 
-    public function getUserInfoController()
-    {
-        if (is_null($this->userInfoController)) {
-            $this->userInfoController = $this->createDefaultUserInfoController();
-        }
-
-        return $this->userInfoController;
-    }
-
     /**
      * every getter deserves a setter
      */
@@ -173,37 +160,6 @@ class Server implements ResourceControllerInterface,
     public function setResourceController(ResourceControllerInterface $resourceController)
     {
         $this->resourceController = $resourceController;
-    }
-
-    /**
-     * every getter deserves a setter
-     */
-    public function setUserInfoController(UserInfoControllerInterface $userInfoController)
-    {
-        $this->userInfoController = $userInfoController;
-    }
-
-    /**
-     * Return claims about the authenticated end-user.
-     * This would be called from the "/UserInfo" endpoint as defined in the spec.
-     *
-     * @param $request - OAuth2\RequestInterface
-     * Request object to grant access token
-     *
-     * @param $response - OAuth2\ResponseInterface
-     * Response object containing error messages (failure) or user claims (success)
-     *
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     *
-     * @see http://openid.net/specs/openid-connect-core-1_0.html#UserInfo
-     */
-    public function handleUserInfoRequest(RequestInterface $request, ResponseInterface $response = null)
-    {
-        $this->response = is_null($response) ? new Response() : $response;
-        $this->getUserInfoController()->handleUserInfoRequest($request, $this->response);
-
-        return $this->response;
     }
 
     /**
@@ -371,6 +327,12 @@ class Server implements ResourceControllerInterface,
                 throw new \InvalidArgumentException(sprintf('storage of type "%s" must implement interface "%s"', $key, $this->storageMap[$key]));
             }
             $this->storages[$key] = $storage;
+            // special logic to handle "client" and "client_credentials" strangeness
+			if ( $key === 'client_credentials' && ! isset( $this->storages['client'] ) ) {
+				if ( $storage instanceof \OAuth2\Storage\ClientInterface ) {
+					$this->storages['client'] = $storage;
+				}
+			}
         } elseif (!is_null($key) && !is_numeric($key)) {
             throw new \InvalidArgumentException(sprintf('unknown storage key "%s", must be one of [%s]', $key, implode(', ', array_keys($this->storageMap))));
         } else {
@@ -488,25 +450,6 @@ class Server implements ResourceControllerInterface,
         $config = array_intersect_key($this->config, array('www_realm' => ''));
 
         return new ResourceController($this->tokenType, $this->storages['access_token'], $config, $this->getScopeUtil());
-    }
-
-    protected function createDefaultUserInfoController()
-    {
-        if (!isset($this->storages['access_token'])) {
-            throw new \LogicException("You must supply a storage object implementing OAuth2\Storage\AccessTokenInterface or use JwtAccessTokens to use the UserInfo server");
-        }
-
-        if (!isset($this->storages['user_claims'])) {
-            throw new \LogicException("You must supply a storage object implementing OAuth2\OpenID\Storage\UserClaimsInterface to use the UserInfo server");
-        }
-
-        if (!$this->tokenType) {
-            $this->tokenType = $this->getDefaultTokenType();
-        }
-
-        $config = array_intersect_key($this->config, array('www_realm' => ''));
-
-        return new UserInfoController($this->tokenType, $this->storages['access_token'], $this->storages['user_claims'], $config, $this->getScopeUtil());
     }
 
     protected function getDefaultTokenType()

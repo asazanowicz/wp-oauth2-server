@@ -2,9 +2,6 @@
 
 namespace OAuth2\Storage;
 
-use OAuth2\OpenID\Storage\AuthorizationCodeInterface as OpenIDAuthorizationCodeInterface;
-use OAuth2\OpenID\Storage\UserClaimsInterface;
-
 /**
  * Simple in-memory storage for all storage types
  *
@@ -14,11 +11,9 @@ use OAuth2\OpenID\Storage\UserClaimsInterface;
  * @author Brent Shaffer <bshafs at gmail dot com>
  */
 class Memory implements AuthorizationCodeInterface,
-	UserClaimsInterface,
 	AccessTokenInterface,
 	RefreshTokenInterface,
-	ScopeInterface,
-	OpenIDAuthorizationCodeInterface {
+	ScopeInterface {
 
 	public $authorizationCodes;
 	public $userCredentials;
@@ -119,31 +114,6 @@ class Memory implements AuthorizationCodeInterface,
 			),
 			$this->userCredentials[ $username ]
 		);
-	}
-
-	/* UserClaimsInterface */
-	public function getUserClaims( $user_id, $claims ) {
-		if ( ! $userDetails = $this->getUserDetails( $user_id ) ) {
-			return false;
-		}
-
-		$claims     = explode( ' ', trim( $claims ) );
-		$userClaims = array();
-
-		// for each requested claim, if the user has the claim, set it in the response
-		$validClaims = explode( ' ', self::VALID_CLAIMS );
-		foreach ( $validClaims as $validClaim ) {
-			if ( in_array( $validClaim, $claims ) ) {
-				if ( $validClaim == 'address' ) {
-					// address is an object with subfields
-					$userClaims['address'] = $this->getUserClaim( $validClaim, $userDetails['address'] ?: $userDetails );
-				} else {
-					$userClaims = array_merge( $this->getUserClaim( $validClaim, $userDetails ) );
-				}
-			}
-		}
-
-		return $userClaims;
 	}
 
 	protected function getUserClaim( $claim, $userDetails ) {
