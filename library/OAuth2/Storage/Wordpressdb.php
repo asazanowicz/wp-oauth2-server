@@ -15,12 +15,8 @@ use OAuth2\OpenID\Storage\AuthorizationCodeInterface as OpenIDAuthorizationCodeI
 class Wordpressdb implements 
 	AuthorizationCodeInterface, 
 	AccessTokenInterface, 
-	ClientCredentialsInterface, 
-	UserCredentialsInterface, 
 	RefreshTokenInterface, 
-	JwtBearerInterface, 
 	ScopeInterface, 
-	PublicKeyInterface, 
 	UserClaimsInterface, 
 	OpenIDAuthorizationCodeInterface
 {

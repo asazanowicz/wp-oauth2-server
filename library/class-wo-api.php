@@ -165,7 +165,7 @@ if ( $well_known == 'openid-configuration' ) {
 		'issuer' => site_url( null, 'https' ),
 	  'authorization_endpoint' => site_url( '/oauth/authorize' ),
 	  'token_endpoint' => site_url( 'oauth/token' ),
-	  'userinfo_endpoint' => site_url( '/oauth/me' ),
+	  'userinfo_endpoint' => site_url( '/oauth/userinfo' ),
 	  'jwks_uri' => site_url( '/.well-known/keys' ),
 	  'response_types_supported' => array( 'code', 'id_token', 'token id_token', 'code id_token' ),
 	  'subject_types_supported' => array( 'public' ),
