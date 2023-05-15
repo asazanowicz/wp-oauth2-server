@@ -63,7 +63,7 @@ class WPOAuth_Admin {
 		add_thickbox();
 		?>
 			<div class="wrap">
-	      	<h2>WP OAuth Server <strong><small> | v<?php echo _WO()->version; ?></small></strong></h2>
+	      	<h2>OAuth Server <strong><small> | v<?php echo _WO()->version; ?></small></strong></h2>
 	     	<br/> 
 	     	<p>VERSION 3.1.9</p>
       	<form method="post" action="options.php">
@@ -290,59 +290,5 @@ class WPOAuth_Admin {
 <?php
 }
 
-	/**
-	 * WO options validation
-	 * @param  [type] $input [description]
-	 * @return [type]        [description]
-	 */
-	public function validate($input) {
-
-		// Check box values
-		$input["enabled"] = isset($input["enabled"]) ? $input["enabled"] : 0;
-		$input["auth_code_enabled"] = isset($input["auth_code_enabled"]) ? $input["auth_code_enabled"] : 0;
-		$input["client_creds_enabled"] = isset($input["client_creds_enabled"]) ? $input["client_creds_enabled"] : 0;
-		$input["user_creds_enabled"] = isset($input["user_creds_enabled"]) ? $input["user_creds_enabled"] : 0;
-		$input["refresh_tokens_enabled"] = isset($input["refresh_tokens_enabled"]) ? $input["refresh_tokens_enabled"] : 0;
-		$input["implicit_enabled"] = isset($input["implicit_enabled"]) ? $input["implicit_enabled"] : 0;
-
-		$input["require_exact_redirect_uri"] = isset($input["require_exact_redirect_uri"]) ? $input["require_exact_redirect_uri"] : 0;
-		$input["enforce_state"] = isset($input["enforce_state"]) ? $input["enforce_state"] : 0;
-		$input["use_openid_connect"] = isset($input["use_openid_connect"]) ? $input["use_openid_connect"] : 0;
-
-		if(!isset($input['id_token_lifetime']))
-			$input['id_token_lifetime'] = 3600;
-
-		if(!isset($input['access_token_lifetime']))
-			$input['access_token_lifetime'] = 3600;
-
-		if(!isset($input['refresh_token_lifetime']))
-			$input['refresh_token_lifetime'] = 86400;
-
-		// Only run with valid license
-		$input["blacklist_ip_range_enabled"] = isset($input["blacklist_ip_range_enabled"]) ? $input["blacklist_ip_range_enabled"] : 0;
-		$input["block_all_incomming"] = isset($input["block_all_incomming"]) ? $input["block_all_incomming"] : 0;
-
-		$current_options = get_option($this->option_name);
-		if(!empty($input['license']) && $current_options['license'] != $input['license']){
-			$api_params = array( 
-				'edd_action'=> 'activate_license', 
-				'license' 	=> $input['license'], 
-				'item_name' => urlencode('WP OAuth License'),
-				'url'       => home_url()
-			);
-			$response = wp_remote_get( add_query_arg( $api_params, 'http://wp-oauth.com' ) );
-			if ( !is_wp_error( $response ) ){
-				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-				$input['license_status'] = $license_data->license;
-			}
-		}elseif($input['license'] == ''){
-				$input['license_status'] = '';
-		}else {
-				$input['license_status'] = $current_options['license_status'];
-		}
-
-
-		return $input;
-	}
 }
 WPOAuth_Admin::init();
