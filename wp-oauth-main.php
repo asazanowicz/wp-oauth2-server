@@ -45,7 +45,6 @@ class WO_Server {
 
 		
 		add_filter( 'determine_current_user', array($this, '_wo_authenicate_bypass'), 21);
-		add_action("init", array(__CLASS__, "includes"));
 
 	}
 
