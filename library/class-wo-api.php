@@ -127,54 +127,54 @@ if ( $method == 'authorize' ) {
 	exit;
 }
 
-/*
-|--------------------------------------------------------------------------
-| PUBLIC KEY
-|--------------------------------------------------------------------------
-|
-| Presents the generic public key for signing.
-|	@since 3.0.5
-*/
-if ( $well_known  == 'keys' ) {
-	$keys = apply_filters( 'wo_server_keys', null);
-	$publicKey = openssl_pkey_get_public( file_get_contents( $keys['public'] ) );
-	$publicKey = openssl_pkey_get_details( $publicKey );
-	$response = new OAuth2\Response( array(
-		'keys' => array(
-			array(
-				'kty' => 'RSA',
-				'alg' => 'RS256',
-				'use' => 'sig',
-				'n' =>  base64_encode( $publicKey['rsa']['n'] ),
-				'e' =>  base64_encode( $publicKey['rsa']['e'] )
-				)
-			)
-	));
-	$response->send();
-	exit;
-}
+// /*
+// |--------------------------------------------------------------------------
+// | PUBLIC KEY
+// |--------------------------------------------------------------------------
+// |
+// | Presents the generic public key for signing.
+// |	@since 3.0.5
+// */
+// if ( $well_known  == 'keys' ) {
+// 	$keys = apply_filters( 'wo_server_keys', null);
+// 	$publicKey = openssl_pkey_get_public( file_get_contents( $keys['public'] ) );
+// 	$publicKey = openssl_pkey_get_details( $publicKey );
+// 	$response = new OAuth2\Response( array(
+// 		'keys' => array(
+// 			array(
+// 				'kty' => 'RSA',
+// 				'alg' => 'RS256',
+// 				'use' => 'sig',
+// 				'n' =>  base64_encode( $publicKey['rsa']['n'] ),
+// 				'e' =>  base64_encode( $publicKey['rsa']['e'] )
+// 				)
+// 			)
+// 	));
+// 	$response->send();
+// 	exit;
+// }
 
-/*
-|--------------------------------------------------------------------------
-| OpenID Discovery
-|--------------------------------------------------------------------------
-|
-*/
-if ( $well_known == 'openid-configuration' ) {
-	$openid_configuration = array(
-		'issuer' => site_url( null, 'https' ),
-	  'authorization_endpoint' => site_url( '/oauth/authorize' ),
-	  'token_endpoint' => site_url( 'oauth/token' ),
-	  'userinfo_endpoint' => site_url( '/oauth/userinfo' ),
-	  'jwks_uri' => site_url( '/.well-known/keys' ),
-	  'response_types_supported' => array( 'code', 'id_token', 'token id_token', 'code id_token' ),
-	  'subject_types_supported' => array( 'public' ),
-		'id_token_signing_alg_values_supported' => array( 'RS256' )
-	);
-	$response = new OAuth2\Response( $openid_configuration );
-	$response->send();
-	exit;
-}
+// /*
+// |--------------------------------------------------------------------------
+// | OpenID Discovery
+// |--------------------------------------------------------------------------
+// |
+// */
+// if ( $well_known == 'openid-configuration' ) {
+// 	$openid_configuration = array(
+// 		'issuer' => site_url( null, 'https' ),
+// 	  'authorization_endpoint' => site_url( '/oauth/authorize' ),
+// 	  'token_endpoint' => site_url( 'oauth/token' ),
+// 	  'userinfo_endpoint' => site_url( '/oauth/userinfo' ),
+// 	  'jwks_uri' => site_url( '/.well-known/keys' ),
+// 	  'response_types_supported' => array( 'code', 'id_token', 'token id_token', 'code id_token' ),
+// 	  'subject_types_supported' => array( 'public' ),
+// 		'id_token_signing_alg_values_supported' => array( 'RS256' )
+// 	);
+// 	$response = new OAuth2\Response( $openid_configuration );
+// 	$response->send();
+// 	exit;
+// }
 
 /*
 |--------------------------------------------------------------------------

@@ -22,7 +22,6 @@ if ( ! defined( 'WPOAUTH_VERSION' ) ) {
 	define( 'WPOAUTH_VERSION', '1.0.0' );
 }
 
-require_once dirname( __FILE__ ) . '/includes/functions.php';
 require_once dirname( __FILE__ ) . '/wp-oauth-main.php';
 
 /**
