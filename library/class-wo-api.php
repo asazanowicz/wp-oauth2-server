@@ -55,18 +55,7 @@ $server = new OAuth2\Server( $storage, $config );
 |
  */
 $support_grant_types = array();
-if ( '1' == $o['auth_code_enabled'] ) {
-	$server->addGrantType( new OAuth2\GrantType\AuthorizationCode( $storage ) );
-}
-// if ( '1' == $o['client_creds_enabled'] ) {
-// 	$server->addGrantType(new OAuth2\GrantType\ClientCredentials( $storage ) );
-// }
-// if ( '1' == $o['user_creds_enabled'] ) {
-// 	$server->addGrantType(new OAuth2\GrantType\UserCredentials( $storage ) );
-// }
-// if ( '1' == $o['refresh_tokens_enabled'] ) {
-// 	$server->addGrantType( new OAuth2\GrantType\RefreshToken( $storage, $config ) );
-// }
+$server->addGrantType( new OAuth2\GrantType\AuthorizationCode( $storage ) );
 if ( '1' == $o['use_openid_connect'] ) {
 	$server->addGrantType( new OAuth2\OpenID\GrantType\AuthorizationCode( $storage, $config ) );
 }
