@@ -22,6 +22,17 @@ if ( ! defined( 'WPOAUTH_VERSION' ) ) {
 	define( 'WPOAUTH_VERSION', '1.0.0' );
 }
 
+/** 
+ * 5.4 Strict Mode Temp Patch
+ *
+ * Since PHP 5.4, WP will through notices due to the way WP calls statically
+ */
+function _wo_server_register_files() {
+	wp_register_style( 'wo_admin', plugins_url( '/library/content/admin.css', __FILE__ ) );
+	wp_register_script( 'wo_admin', plugins_url( '/library/content/admin.js', __FILE__ ) );
+}
+add_action( 'wp_loaded', '_wo_server_register_files' );
+
 require_once dirname( __FILE__ ) . '/wp-oauth-main.php';
 
 /**
