@@ -321,21 +321,7 @@ class Server implements ResourceControllerInterface,
      */
     public function addStorage($storage, $key = null)
     {
-        // if explicitly set to a valid key, do not "magically" set below
-        if (isset($this->storageMap[$key])) {
-            if (!is_null($storage) && !$storage instanceof $this->storageMap[$key]) {
-                throw new \InvalidArgumentException(sprintf('storage of type "%s" must implement interface "%s"', $key, $this->storageMap[$key]));
-            }
-            $this->storages[$key] = $storage;
-            // special logic to handle "client" and "client_credentials" strangeness
-			if ( $key === 'client_credentials' && ! isset( $this->storages['client'] ) ) {
-				if ( $storage instanceof \OAuth2\Storage\ClientInterface ) {
-					$this->storages['client'] = $storage;
-				}
-			}
-        } elseif (!is_null($key) && !is_numeric($key)) {
-            throw new \InvalidArgumentException(sprintf('unknown storage key "%s", must be one of [%s]', $key, implode(', ', array_keys($this->storageMap))));
-        } else {
+        
             $set = false;
             foreach ($this->storageMap as $type => $interface) {
                 if ($storage instanceof $interface) {
@@ -347,7 +333,7 @@ class Server implements ResourceControllerInterface,
             if (!$set) {
                 throw new \InvalidArgumentException(sprintf('storage of class "%s" must implement one of [%s]', get_class($storage), implode(', ', $this->storageMap)));
             }
-        }
+        
     }
 
     public function addResponseType(ResponseTypeInterface $responseType, $key = null)
@@ -399,9 +385,8 @@ class Server implements ResourceControllerInterface,
         if (!isset($this->storages['client'])) {
             throw new \LogicException("You must supply a storage object implementing OAuth2\Storage\ClientInterface to use the authorize server");
         }
-        if (0 == count($this->responseTypes)) {
-            $this->responseTypes = $this->getDefaultResponseTypes();
-        }
+        $this->responseTypes = $this->getDefaultResponseTypes();
+        
 
         $config = array_intersect_key($this->config, array_flip(explode(' ', 'allow_implicit enforce_state require_exact_redirect_uri')));
 

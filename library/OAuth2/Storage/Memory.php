@@ -12,7 +12,6 @@ namespace OAuth2\Storage;
  */
 class Memory implements AuthorizationCodeInterface,
 	AccessTokenInterface,
-	RefreshTokenInterface,
 	ScopeInterface {
 
 	public $authorizationCodes;

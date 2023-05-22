@@ -43,9 +43,21 @@ class WO_Server {
 		}
 		spl_autoload_register( array( $this, 'autoload') );
 
-		
+		add_filter( 'rest_authentication_errors', array( $this, 'wpoauth_block_unauthenticated_rest_requests' ) );
 		add_filter( 'determine_current_user', array($this, '_wo_authenicate_bypass'), 21);
+	}
 
+	/**
+	 * Bock unathenticated REST requests
+	 *
+	 * @since 3.4.6
+	 */
+	public function wpoauth_block_unauthenticated_rest_requests( $result ) {
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'rest_not_authorized', 'Authorization is required.', array( 'status' => 401 ) );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -80,6 +92,7 @@ class WO_Server {
 
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -177,8 +190,8 @@ class WO_Server {
 
 		$sql3 = "
 			CREATE TABLE IF NOT EXISTS {$wpdb->prefix}oauth_refresh_tokens (
-				refresh_token       VARCHAR(40)    NOT NULL,
-        client_id           VARCHAR(80)    NOT NULL,
+				refresh_token       VARCHAR(191)    NOT NULL,
+        client_id           VARCHAR(191)    NOT NULL,
         user_id             VARCHAR(80),
         expires             TIMESTAMP      NOT NULL,
         scope               VARCHAR(4000),
@@ -189,7 +202,7 @@ class WO_Server {
 		$sql4 = "
 			CREATE TABLE IF NOT EXISTS {$wpdb->prefix}oauth_authorization_codes (
         authorization_code  VARCHAR(40)    NOT NULL,
-        client_id           VARCHAR(80)    NOT NULL,
+        client_id           VARCHAR(191)    NOT NULL,
         user_id             VARCHAR(80),
         redirect_uri        VARCHAR(2000),
         expires             TIMESTAMP      NOT NULL,
@@ -209,7 +222,7 @@ class WO_Server {
 
 		$sql6 = "
 			CREATE TABLE IF NOT EXISTS {$wpdb->prefix}oauth_jwt (
-        client_id           VARCHAR(80)   NOT NULL,
+        client_id           VARCHAR(191)   NOT NULL,
         subject             VARCHAR(80),
         public_key          VARCHAR(2000) NOT NULL,
         PRIMARY KEY (client_id)
@@ -218,7 +231,7 @@ class WO_Server {
 
 		$sql7 = "
 			CREATE TABLE IF NOT EXISTS {$wpdb->prefix}oauth_public_keys (
-        client_id            VARCHAR(80),
+        client_id            VARCHAR(191),
         public_key           VARCHAR(2000),
         private_key          VARCHAR(2000),
         encryption_algorithm VARCHAR(100) DEFAULT 'RS256',

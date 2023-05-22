@@ -11,9 +11,9 @@ namespace OAuth2\Storage;
  */
 class Wordpressdb implements 
 	AuthorizationCodeInterface, 
-	AccessTokenInterface, 
-	RefreshTokenInterface, 
-	ScopeInterface
+	AccessTokenInterface,  
+	ScopeInterface,
+	ClientInterface
 {
 	protected $db;
 	protected $config;
