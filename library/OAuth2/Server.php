@@ -52,6 +52,7 @@ class Server implements ResourceControllerInterface,
         'authorization_code' => 'OAuth2\Storage\AuthorizationCodeInterface',
         'scope' => 'OAuth2\Storage\ScopeInterface',
         'client'             => 'OAuth2\Storage\ClientInterface',
+        'client_credentials' => 'OAuth2\Storage\ClientCredentialsInterface'
     );
 
     protected $responseTypeMap = array(

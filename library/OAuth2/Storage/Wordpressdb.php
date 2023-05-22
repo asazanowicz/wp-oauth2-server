@@ -13,7 +13,8 @@ class Wordpressdb implements
 	AuthorizationCodeInterface, 
 	AccessTokenInterface,  
 	ScopeInterface,
-	ClientInterface
+	ClientInterface,
+	ClientCredentialsInterface
 {
 	protected $db;
 	protected $config;
