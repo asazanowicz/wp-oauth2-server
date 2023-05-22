@@ -14,7 +14,8 @@ class Wordpressdb implements
 	AccessTokenInterface,  
 	ScopeInterface,
 	ClientInterface,
-	ClientCredentialsInterface
+	ClientCredentialsInterface,
+	UserInterface
 {
 	protected $db;
 	protected $config;
@@ -612,5 +613,19 @@ class Wordpressdb implements
 			return $stmt['encryption_algorithm'];
 		}
 	}
-	
+
+	/**
+	 * [getUserCapabilities description]
+	 * @param  [type] $user_id [description]
+	 * @return [type]            [description]
+	 */
+	public function getUserCapabilities($user_id) 
+	{
+		$capabilitiesStr = $this->db->prepare("SELECT m.meta_value FROM {$this->db->prefix}wp_users AS u JOIN {$this->db->prefix}wp_usermeta AS m ON u.ID = m.user_id WHERE u.ID = %s AND m.meta_key = 'wp_capabilities'", array($user_id));
+		$capabilitiesStr = $this->db->get_row($capabilitiesStr, ARRAY_A);
+		
+		if (null != $capabilitiesStr) {
+			return $capabilitiesStr['meta_value'];
+		}
+	}
 }

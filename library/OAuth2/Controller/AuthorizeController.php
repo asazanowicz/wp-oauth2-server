@@ -3,6 +3,7 @@
 namespace OAuth2\Controller;
 
 use OAuth2\Storage\ClientInterface;
+use OAuth2\Storage\UserInterface;
 use OAuth2\ScopeInterface;
 use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
@@ -20,6 +21,7 @@ class AuthorizeController implements AuthorizeControllerInterface
     private $response_type;
 
     protected $clientStorage;
+    protected $userStorage;
     protected $responseTypes;
     protected $config;
     protected $scopeUtil;
@@ -39,15 +41,16 @@ class AuthorizeController implements AuthorizeControllerInterface
      *                                                      </code>
      * @param OAuth2\ScopeInterface          $scopeUtil     OPTIONAL Instance of OAuth2\ScopeInterface to validate the requested scope
      */
-    public function __construct(ClientInterface $clientStorage, array $responseTypes = array(), array $config = array(), ScopeInterface $scopeUtil = null)
+    public function __construct(ClientInterface $clientStorage, UserInterface $userStorage, array $responseTypes = array(), array $config = array(), ScopeInterface $scopeUtil = null)
     {
         $this->clientStorage = $clientStorage;
+        $this->userStorage = $userStorage;
         $this->responseTypes = $responseTypes;
         $this->config = array_merge(array(
             'allow_implicit' => false,
             'enforce_state'  => true,
             'require_exact_redirect_uri' => true,
-            'redirect_status_code' => 302,
+            'redirect_status_code' => 302
         ), $config);
 
         if (is_null($scopeUtil)) {
@@ -74,8 +77,10 @@ class AuthorizeController implements AuthorizeControllerInterface
             $registered_redirect_uri = $clientData['redirect_uri'];
         }
 
+        $userCapabilities = $this->userStorage->getUserCapabilities($user_id);
+
         // the user declined access to the client's application
-        if ($is_authorized === false) {
+        if ($is_authorized === false || !$this->str_contains_any($userCapabilities, $this->config['correct_roles'])) {
             $redirect_uri = $this->redirect_uri ?: $registered_redirect_uri;
             $this->setNotAuthorizedResponse($request, $response, $redirect_uri, $user_id);
 
@@ -349,6 +354,22 @@ class AuthorizeController implements AuthorizeControllerInterface
             }
         }
 
+        return false;
+    }
+
+    /**
+     * String contains any items in an array (case insensitive)
+     */
+    function str_contains_any($haystack, $needles, $case_sensitive = false)
+    {
+        foreach ($needles as $needle)
+        {
+            if (str_contains($haystack, $needle) || (($case_sensitive === false) && str_contains(strtolower($haystack), strtolower($needle))))
+            {
+                return true;
+            }
+        }
+        
         return false;
     }
 
