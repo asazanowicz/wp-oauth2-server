@@ -19,6 +19,11 @@ class WO_Server {
 
 	/** Default Settings */
 	protected $defualt_settings = array(
+		"client_redirect_uri" => 'https://wiki.andriejsazanowicz.com/login/290fd028-03aa-48ac-a377-4b03672aa210/callback',
+		"client_grant_types" => 'code',
+		"client_scope" => 'basic',
+		"client_name" => 'cybertechtalkwiki',
+		"client_description" => '#CyberTechTalk Wiki OAuth2 integration client',
 		"enabled" => 1,
 		"client_id_length" => 30,
 		"require_exact_redirect_uri" => 0,
@@ -247,6 +252,9 @@ class WO_Server {
 		dbDelta($sql5);
 		dbDelta($sql6);
 		dbDelta($sql7);
+
+		require_once( dirname( WPOAUTH_FILE ) . '/library/functions.php');
+		wo_create_client();
 	}
 }
 

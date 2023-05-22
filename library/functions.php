@@ -216,7 +216,7 @@ function wo_has_certificates (){
  * @todo Add role and permissions check
  */
 function wo_create_client( $user=null ){
-
+	$options = get_option("wo_options");
 	do_action('wo_before_create_client', array( $user ) );
 	if(! current_user_can( 'manage_options' ) )
 		return false;
@@ -226,12 +226,16 @@ function wo_create_client( $user=null ){
 
 	// Insert the user into the system
 	global $wpdb;
-	return $wpdb->insert("{$wpdb->prefix}oauth_clients",
+	if (! has_a_client()) {
+		return $wpdb->insert("{$wpdb->prefix}oauth_clients",
 		array(
 			'client_id' => $new_client_id,
 			'client_secret' => $new_client_secret,
-			'redirect_uri' => empty($user['client-redirect-uri']) ? '' : $user['client-redirect-uri'],
-			'name' => empty($user['client-name']) ? 'No Name' : $user['client-name'],
-			'description' => empty($user['client-description']) ? '' : $user['client-description']
+			'redirect_uri' => $options["client_redirect_uri"],
+			'grant_types' => $options["client_grant_types"],
+			'scope' => $options["client_scope"],
+			'name' => $options["client_name"],
+			'description' => $options["client_description"]
 			));
+	}
 }
