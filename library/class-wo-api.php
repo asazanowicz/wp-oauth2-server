@@ -38,8 +38,7 @@ $config = array(
 	'allow_credentials_in_request_body' => true, // Must be set to true for openID to work in most cases
 	'allow_public_clients' => false,
 	'always_issue_new_refresh_token' => true,
-	'redirect_status_code' => 302,
-	'correct_roles' => $o['correct_roles']
+	'redirect_status_code' => 302
 );
 $server = new OAuth2\Server( $storage, $config );
 

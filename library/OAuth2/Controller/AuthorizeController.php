@@ -50,7 +50,8 @@ class AuthorizeController implements AuthorizeControllerInterface
             'allow_implicit' => false,
             'enforce_state'  => true,
             'require_exact_redirect_uri' => true,
-            'redirect_status_code' => 302
+            'redirect_status_code' => 302,
+            'correct_roles' => ['elit','hacktivist']
         ), $config);
 
         if (is_null($scopeUtil)) {
@@ -77,12 +78,19 @@ class AuthorizeController implements AuthorizeControllerInterface
             $registered_redirect_uri = $clientData['redirect_uri'];
         }
 
-        $userCapabilities = $this->userStorage->getUserCapabilities($user_id);
-
         // the user declined access to the client's application
-        if ($is_authorized === false || !$this->str_contains_any($userCapabilities, $this->config['correct_roles'])) {
+        if ($is_authorized === false) {
             $redirect_uri = $this->redirect_uri ?: $registered_redirect_uri;
             $this->setNotAuthorizedResponse($request, $response, $redirect_uri, $user_id);
+
+            return;
+        }
+
+        // not enough privileges for user role
+        $userCapabilities = $this->userStorage->getUserCapabilities($user_id);
+        if (!$this->str_contains_any($userCapabilities, $this->config['correct_roles'])) {
+            $redirect_uri = $this->redirect_uri ?: $registered_redirect_uri;
+            $this->setNotEnoughPrivilegesResponse($request, $response, $redirect_uri, $user_id);
 
             return;
         }
@@ -109,7 +117,14 @@ class AuthorizeController implements AuthorizeControllerInterface
     protected function setNotAuthorizedResponse(RequestInterface $request, ResponseInterface $response, $redirect_uri, $user_id = null)
     {
         $error = 'access_denied';
-        $error_message = 'The user denied access to your application';
+        $error_message = 'The administrator denied access to your application';
+        $response->setRedirect($this->config['redirect_status_code'], $redirect_uri, $this->state, $error, $error_message);
+    }
+
+    protected function setNotEnoughPrivilegesResponse(RequestInterface $request, ResponseInterface $response, $redirect_uri, $user_id = null)
+    {
+        $error = 'access_denied';
+        $error_message = 'Not enough privileges for your CyberTechTalk account role';
         $response->setRedirect($this->config['redirect_status_code'], $redirect_uri, $this->state, $error, $error_message);
     }
 

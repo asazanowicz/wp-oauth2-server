@@ -52,7 +52,8 @@ class Server implements ResourceControllerInterface,
         'authorization_code' => 'OAuth2\Storage\AuthorizationCodeInterface',
         'scope' => 'OAuth2\Storage\ScopeInterface',
         'client'             => 'OAuth2\Storage\ClientInterface',
-        'client_credentials' => 'OAuth2\Storage\ClientCredentialsInterface'
+        'client_credentials' => 'OAuth2\Storage\ClientCredentialsInterface',
+        'user'  => 'OAuth2\Storage\UserInterface'
     );
 
     protected $responseTypeMap = array(
@@ -391,7 +392,7 @@ class Server implements ResourceControllerInterface,
 
         $config = array_intersect_key($this->config, array_flip(explode(' ', 'allow_implicit enforce_state require_exact_redirect_uri')));
 
-        return new AuthorizeController($this->storages['client'], $this->responseTypes, $config, $this->getScopeUtil());
+        return new AuthorizeController($this->storages['client'], $this->storages['user'], $this->responseTypes, $config, $this->getScopeUtil());
     }
 
     protected function createDefaultTokenController()

@@ -9,7 +9,7 @@ namespace OAuth2\Storage;
  *
  * @author Brent Shaffer <bshafs at gmail dot com>
  */
-interface UserInterface
+interface UserInterface 
 {
     /**
      * Check if the provided scope exists.

@@ -30,8 +30,7 @@ class WO_Server {
 		"enforce_state" => 0,
 		"refresh_token_lifetime" => 864000, // 10 Days
 		"access_token_lifetime"	=> 86400, // 24 Hours
-		"id_lifetime" => 3600,
-		'correct_roles' => ['elit','hacktivist']
+		"id_lifetime" => 3600
 	);
 
 	function __construct() {
