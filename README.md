@@ -1,12 +1,12 @@
 
-# OAuth2 Complete For WordPress
+# OAuth2 For WordPress
 
 Your site will be able to provide Single Sign On and also deliver authorized user data using the OAuth 2.0 API.
 
-Contributors: Justin Greer, Joel Wickard, Neil Pullman, Andriej Sazanowicz 
+Contributors: Justin Greer, Joel Wickard, Neil Pullman, Andriej Sazanowicz
+
 Requires at least: 3.4.2  
-Tested up to: 3.7  
-Stable tag: 2.0.0
+Tested on: 6.2.2  
 License: GPLv2 or later  
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
