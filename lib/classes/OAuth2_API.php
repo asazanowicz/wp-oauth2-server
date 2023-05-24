@@ -119,11 +119,23 @@ switch($method){
 		$user_id = $data['user_id'];
 		
 		global $wpdb;
-		$info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}users WHERE ID = ".$user_id."");
 
-		// don't send sensitive info accross the wire.
-		unset($info->user_pass);
-		unset($info->user_activation_key);
+		$info = $wpdb->get_row("SELECT 
+			u.ID
+			, u.user_login
+			, u.user_nicename
+			, u.user_email
+			, u.user_url
+			, u.user_registered
+			, u.user_status
+			, u.display_name
+			, m.meta_value AS role 
+			FROM {$wpdb->prefix}users AS u 
+			JOIN {$wpdb->prefix}usermeta AS m ON u.ID = m.user_id WHERE u.ID = ".$user_id." 
+				AND m.meta_key = '{$wpdb->prefix}capabilities'");
+
+		// retrive user role, if not assign free role
+		$info->role = explode(" ", preg_match('/"(.*?)"/s', $info->role, $match) == 1 ? $match[1] : "free");
 
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

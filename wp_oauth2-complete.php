@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: WP OAuth2 Complete
-Plugin URI: https://github.com/justingreerbbi/wordpress-oauth
-Description: Allows Wordpress to use OAuth2 structure and become a provider
-Version: 2.0.0
-Author: Justin Greer (justingreerbbi), Joel Wickard (jwickard), Neil Pullman (neiltron)
+Plugin Name: OAuth2 Server
+Plugin URI: https://github.com/asazanowicz/wp-oauth2-server
+Description: OAuth2 server to login with CyberTechTalk Wordpress accounts
+Version: 1.0.0
+Author: Andriej Sazanowicz (asazanowicz)
 Author URI: https://github.com/justingreerbbi/wordpress-oauth
 License: GPL2
 */
